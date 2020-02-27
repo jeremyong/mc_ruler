@@ -1,0 +1,32 @@
+# CMake files
+build*
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps
+
+# Windows files
+Thumbs.db
+
+# MacOS files
+.DS_Store
+
+# Dump file
+*.stackdump
+
+# IDE/editor files
+.vscode
+*.bak
+*.tmp
+ipch/
+
+# Statically generated documentation
+site/
+doxygen/
