@@ -28,6 +28,7 @@ function(mc_ruler TARGET)
     get_target_property(TARG_INC_DIRS ${TARGET} INCLUDE_DIRECTORIES)
     get_target_property(TARG_COMP_FEATURES ${TARGET} COMPILE_FEATURES)
     get_target_property(TARG_BIN_DIR ${TARGET} BINARY_DIR)
+    get_target_property(TARG_SOURCE_DIR ${TARGET} SOURCE_DIR)
 
     if(NOT TARG_COMP_OPTS)
         set(TARG_COMP_OPTS "")
@@ -61,6 +62,11 @@ function(mc_ruler TARGET)
     foreach(SOURCE ${MC_RULER_SOURCES})
         get_filename_component(SOURCE_DIR ${SOURCE} DIRECTORY)
         get_filename_component(SOURCE_FILE ${SOURCE} NAME)
+        if(NOT SOURCE_DIR)
+            set(SOURCE_REL "")
+        else()
+            set(SOURCE_REL "${SOURCE_DIR}/")
+        endif()
         get_filename_component(SOURCE_NAME ${SOURCE} NAME_WLE)
         file(MAKE_DIRECTORY ${OUTPUT_DIR}/${SOURCE_DIR})
 
@@ -128,7 +134,7 @@ function(mc_ruler TARGET)
             ARGS
             -o ${OUTPUT_DIR}/${SOURCE_DIR}/${SOURCE_NAME}.mcr
             ${MC_RULER_LLVM_MCA_FLAGS}
-            ${TARG_BIN_DIR}/CMakeFiles/${SOURCE_TARGET}.dir/${SOURCE_NAME}.s
+            ${TARG_BIN_DIR}/CMakeFiles/${SOURCE_TARGET}.dir/${SOURCE_REL}${SOURCE_NAME}.s
             BYPRODUCTS ${OUTPUT_DIR}/${SOURCE_DIR}/${SOURCE_NAME}.mcr
             WORKING_DIRECTORY
             ${OUTPUT_DIR}

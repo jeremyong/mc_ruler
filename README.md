@@ -55,8 +55,9 @@ float dot_product(__m128 const& a, __m128 const& b)
     __m128 sums = _mm_add_ps(a, s);
     s           = _mm_movehl_ps(s, sums);
     sums        = _mm_add_ss(sums, s);
-    return _mm_cvtss_f32(sums);
+    auto out    = _mm_cvtss_f32(sums);
     MC_MEASURE_END();
+    return out;
 }
 ```
 

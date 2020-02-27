@@ -3,6 +3,7 @@
 int foo(int a, int b)
 {
     MC_MEASURE_BEGIN(foo);
-    return a + b;
+    int out = a + b;
     MC_MEASURE_END();
+    return out;
 }

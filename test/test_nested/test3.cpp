@@ -4,6 +4,7 @@
 std::string foo(std::string const& a, std::string const& b)
 {
     MC_MEASURE_BEGIN(foo);
-    return a + b;
+    std::string out = a + b;
     MC_MEASURE_END();
+    return out;
 }
