@@ -26,8 +26,8 @@ function(mc_ruler TARGET)
     get_target_property(TARG_LINK_OPTS ${TARGET} LINK_OPTIONS)
     get_target_property(TARG_LINK_DIRS ${TARGET} LINK_DIRECTORIES)
     get_target_property(TARG_INC_DIRS ${TARGET} INCLUDE_DIRECTORIES)
-    get_target_property(TARG_BIN_DIR ${TARGET} BINARY_DIR)
     get_target_property(TARG_COMP_FEATURES ${TARGET} COMPILE_FEATURES)
+    get_target_property(TARG_BIN_DIR ${TARGET} BINARY_DIR)
 
     if(NOT TARG_COMP_OPTS)
         set(TARG_COMP_OPTS "")
@@ -86,18 +86,18 @@ function(mc_ruler TARGET)
         target_include_directories(
             ${SOURCE_TARGET}
             PRIVATE
-            ${TARG_INCLUDE_DIRS}
+            ${TARG_INC_DIRS}
         )
         target_compile_options(
             ${SOURCE_TARGET}
             PRIVATE
-            ${TARG_COMPILE_OPTS}
-            --save-temps
+            ${TARG_COMP_OPTS}
+            --save-temps=obj
         )
         target_compile_definitions(
             ${SOURCE_TARGET}
             PRIVATE
-            ${TARGET_COMPILE_DEFS}
+            ${TARGET_COMP_DEFS}
             MC_RULER_ENABLED
         )
         target_link_directories(
@@ -128,7 +128,7 @@ function(mc_ruler TARGET)
             ARGS
             -o ${OUTPUT_DIR}/${SOURCE_DIR}/${SOURCE_NAME}.mcr
             ${MC_RULER_LLVM_MCA_FLAGS}
-            ${TARG_BIN_DIR}/${SOURCE_NAME}.s
+            ${TARG_BIN_DIR}/CMakeFiles/${SOURCE_TARGET}.dir/${SOURCE_NAME}.s
             BYPRODUCTS ${OUTPUT_DIR}/${SOURCE_DIR}/${SOURCE_NAME}.mcr
             WORKING_DIRECTORY
             ${OUTPUT_DIR}
