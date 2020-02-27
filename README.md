@@ -6,7 +6,10 @@ MC Ruler (Machine Code Ruler) allows you to easily instrument your code and mark
 segments to be analyzed with
 [llvm-mca](https://llvm.org/docs/CommandGuide/llvm-mca.html). The tool then produces,
 for each region marked to be analyzed, a separate report containing analysis
-produced by llvm-mca.
+produced by llvm-mca. Originally, this code was used to analyze the performance of
+the [Klein](https://github.com/jeremyong/klein) library, but it has been extracted
+into this repository to quickly enable analysis in all projects that can be compiled
+with clang and leverage CMake.
 
 ## Quick Start
 
@@ -60,7 +63,7 @@ float dot_product(__m128 const& a, __m128 const& b)
 Then, in CMake, after your target is defined, do the following:
 
 ```cmake
-mc_measure(
+mc_ruler(
     my_target
     SOURCES
     dot_product.cpp
@@ -215,7 +218,7 @@ Resource pressure by instruction:
 ## How does it work?
 
 Internally, MC Ruler defines a new target for every source file passed to the
-`mc_measure` CMake function. All the properties from the original target are copied
+`mc_ruler` CMake function. All the properties from the original target are copied
 to the new target so that it compiles properly with the correct compile definitions,
 library linkages, include directories, etc. Then, it is compiled as an individual target
 with additional flags set to ensure the assembly is saved.

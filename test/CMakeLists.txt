@@ -5,7 +5,7 @@ target_compile_features(test PRIVATE cxx_std_17)
 target_compile_options(test PRIVATE -msse3)
 target_link_libraries(test PUBLIC mc_ruler)
 
-mc_measure(
+mc_ruler(
     test
     SOURCES
     test1.cpp
