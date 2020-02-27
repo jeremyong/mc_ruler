@@ -33,7 +33,7 @@ Then, for each target with code you want to instrument, do the following:
 ```cmake
 # mc_ruler is an interface exposing a single header. No code is linked
 # and the only thing that will change is the include path
-target_link_libraries(my_target PUBLIC mc_ruler)
+target_link_libraries(my_target PUBLIC mc_ruler::mc_ruler)
 ```
 
 Finally, for each source file containing code you wish to instrument with llvm-mca,
