@@ -3,20 +3,30 @@
 function(mc_ruler TARGET)
     cmake_parse_arguments(PARSE_ARGV 1 MC_RULER "" "" "SOURCES;LLVM_MCA_FLAGS")
 
-    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-        set(USING_CLANGPP ON)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+        set(VALID_CXX_COMPILER ON)
+        if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+            set(TEMP_CXX_SUFFIX "")
+        else()
+            set(TEMP_CXX_SUFFIX ".cpp")
+        endif()
     else()
-        set(USING_CLANGPP OFF)
+        set(VALID_CXX_COMPILER OFF)
     endif()
 
-    if(CMAKE_C_COMPILER_ID MATCHES "Clang")
-        set(USING_CLANG ON)
+    if(CMAKE_C_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+        set(VALID_CC_COMPILER ON)
+        if(CMAKE_C_COMPILER_ID MATCHES "Clang")
+            set(TEMP_C_SUFFIX "")
+        else()
+            set(TEMP_C_SUFFIX ".c")
+        endif()
     else()
-        set(USING_CLANG OFF)
+        set(VALID_CC_COMPILER OFF)
     endif()
 
-    if(NOT (USING_CLANGPP OR USING_CLANG))
-        message(WARNING "Not using Clang C or CXX compiler. MC ruler is deactivated")
+    if(NOT (VALID_CXX_COMPILER OR VALID_CC_COMPILER))
+        message(WARNING "Not using supported C or CXX compiler. MC ruler is deactivated")
         return()
     endif()
 
@@ -71,18 +81,23 @@ function(mc_ruler TARGET)
         file(MAKE_DIRECTORY ${OUTPUT_DIR}/${SOURCE_DIR})
 
         get_source_file_property(LANG ${SOURCE} LANGUAGE)
-        if(LANG STREQUAL "CXX" AND NOT USING_CLANGPP)
+        if(LANG STREQUAL "CXX" AND NOT VALID_CXX_COMPILER)
             message(
                 WARNING
                 "Not using Clang C++ compiler. ${SOURCE} omitted from mc ruler measurement"
             )
             continue()
-        elseif(LANG STREQUAL "C" AND NOT USING_CLANG)
+        elseif(LANG STREQUAL "C" AND NOT VALID_CC_COMPILER)
             message(
                 WARNING
                 "Not using Clang C compiler. ${SOURCE} omitted from mc ruler measurement"
             )
             continue()
+        endif()
+        if(LANG STREQUAL "CXX")
+            set(TEMP_SUFFIX ${TEMP_CXX_SUFFIX})
+        else()
+            set(TEMP_SUFFIX ${TEMP_C_SUFFIX})
         endif()
 
         # Add a new target for this source file, specifically to emit assembly
@@ -98,7 +113,7 @@ function(mc_ruler TARGET)
             ${SOURCE_TARGET}
             PRIVATE
             ${TARG_COMP_OPTS}
-            --save-temps=obj
+            -save-temps=obj
         )
         target_compile_definitions(
             ${SOURCE_TARGET}
@@ -134,7 +149,7 @@ function(mc_ruler TARGET)
             ARGS
             -o ${OUTPUT_DIR}/${SOURCE_DIR}/${SOURCE_NAME}.mcr
             ${MC_RULER_LLVM_MCA_FLAGS}
-            ${TARG_BIN_DIR}/CMakeFiles/${SOURCE_TARGET}.dir/${SOURCE_REL}${SOURCE_NAME}.s
+            ${TARG_BIN_DIR}/CMakeFiles/${SOURCE_TARGET}.dir/${SOURCE_REL}${SOURCE_NAME}${TEMP_SUFFIX}.s
             BYPRODUCTS ${OUTPUT_DIR}/${SOURCE_DIR}/${SOURCE_NAME}.mcr
             WORKING_DIRECTORY
             ${OUTPUT_DIR}
