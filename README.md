@@ -11,6 +11,15 @@ the [Klein](https://github.com/jeremyong/klein) library, but it has been extract
 into this repository to quickly enable analysis in all projects that can be compiled
 with clang and leverage CMake.
 
+## Important Usage Note
+
+It is important to _double check_ the assembly labels emitted by `MC_MEASURE_BEGIN` and
+`MC_MEASURE_END` correctly fence the code being measured. Both Clang and GCC have moved instructions
+corresponding to inlined assembly (including assembly marked `volatile`). If the assembly labels
+need to be corrected, simply adjust the labels as needed and remove the `mc_ruler/*.mcr` files in
+your build tree before rebuilding again. CMake will not re-compile the object files, and the report will
+rerun with the corrected assembly.
+
 ## Quick Start
 
 In your CMake file, add the following snippet to fetch this project as a
